@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+
+	<Appenders>
+		<Console name="Console" target="SYSTEM_OUT">
+			<PatternLayout pattern="[%d{HH:mm:ss:SSS}] [%rms] [%t] [%p] - %l - %m%n"/>
+		</Console>
+		<File name="Runtime" fileName="log/Runtime.log" append="false">
+			<ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY"/>
+			<PatternLayout pattern="%d{HH:mm:ss.SSS} %rms %-5level %t %class{36} %L %M - %msg%xEx%n"/>
+		</File>
+		<File name="Debug" fileName="log/Debug.log" append="false">
+			<ThresholdFilter level="debug" onMatch="ACCEPT" onMismatch="DENY"/>
+			<PatternLayout pattern="%d{HH:mm:ss.SSS} %rms %-5level %t %class{36} %L %M - %msg%xEx%n"/>
+		</File>
+		<RollingFile name="RollingDebug" fileName="logs/Debug.log"
+					 filePattern="logs/$${date:yyyy-MM}/Debug-%d{yyyy-MM-dd}-%i.log">
+			<ThresholdFilter level="debug" onMatch="ACCEPT" onMismatch="DENY"/>
+			<PatternLayout pattern="[%d{HH:mm:ss:SSS}] [%rms] [%t] [%p] - %l - %m%n"/>
+			<Policies>
+				<TimeBasedTriggeringPolicy/>
+				<SizeBasedTriggeringPolicy size="128 MB"/>
+			</Policies>
+		</RollingFile>
+		<RollingFile name="RollingInfo" fileName="logs/Info.log"
+					 filePattern="logs/$${date:yyyy-MM}/Info-%d{yyyy-MM-dd}-%i.log">
+			<ThresholdFilter level="info" onMatch="ACCEPT" onMismatch="DENY"/>
+			<PatternLayout pattern="[%d{HH:mm:ss:SSS}] [%rms] [%t] [%p] - %l - %m%n"/>
+			<Policies>
+				<TimeBasedTriggeringPolicy/>
+				<SizeBasedTriggeringPolicy size="128 MB"/>
+			</Policies>
+		</RollingFile>
+		<RollingFile name="RollingWarn" fileName="logs/Warn.log"
+					 filePattern="logs/$${date:yyyy-MM}/Warn-%d{yyyy-MM-dd}-%i.log">
+			<ThresholdFilter level="warn" onMatch="ACCEPT" onMismatch="DENY"/>
+			<PatternLayout pattern="[%d{HH:mm:ss:SSS}] [%rms] [%t] [%p] - %l - %m%n"/>
+			<Policies>
+				<TimeBasedTriggeringPolicy/>
+				<SizeBasedTriggeringPolicy size="128 MB"/>
+			</Policies>
+		</RollingFile>
+		<RollingFile name="RollingError" fileName="logs/Error.log"
+					 filePattern="logs/$${date:yyyy-MM}/Error-%d{yyyy-MM-dd}-%i.log">
+			<ThresholdFilter level="error" onMatch="ACCEPT" onMismatch="DENY"/>
+			<PatternLayout pattern="[%d{HH:mm:ss:SSS}] [%rms] [%t] [%p] - %l - %m%n"/>
+			<Policies>
+				<TimeBasedTriggeringPolicy/>
+				<SizeBasedTriggeringPolicy size="128 MB"/>
+			</Policies>
+		</RollingFile>
+	</Appenders>
+	<Loggers>
+		<Root level="all">
+			<AppenderRef ref="Console"/>
+			<AppenderRef ref="Runtime"/>
+			<AppenderRef ref="Debug"/>
+			<AppenderRef ref="RollingError"/>
+			<AppenderRef ref="RollingWarn"/>
+			<AppenderRef ref="RollingInfo"/>
+			<AppenderRef ref="RollingDebug"/>
+		</Root>
+	</Loggers>
+</Configuration>
