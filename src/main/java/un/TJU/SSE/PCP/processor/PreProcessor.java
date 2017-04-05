@@ -7,7 +7,10 @@ import un.TJU.SSE.PCP.util.ParamHelper;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
+import java.util.Arrays;
 import java.util.Map;
+import java.util.StringJoiner;
 
 /**
  * Created by yiros on 2017/3/28.
@@ -17,11 +20,9 @@ public class PreProcessor extends AbstractProcessor implements Processor {
     private static final int DEFAULT_INPUT_BUFFER_SIZE = 4 * 1024 * 1024;
     private int inputBufferSize = 0;
     private int outputBufferSize = 0;
-    private int blockSize = 0;
 
     private void init (final Map<String, String> params) {
         inputBufferSize= ParamHelper.getIntParam(params, "inputBufferSize");
-        inputBufferSize = inputBufferSize - inputBufferSize% 4;
         if (inputBufferSize <= 0) {
             LOGGER.warn("Unsupported input. Use default input buffer size setting");
             inputBufferSize = DEFAULT_INPUT_BUFFER_SIZE;
@@ -29,28 +30,56 @@ public class PreProcessor extends AbstractProcessor implements Processor {
         LOGGER.info("Input buffer size set to " + String.valueOf(inputBufferSize));
 
         outputBufferSize= ParamHelper.getIntParam(params, "outputBufferSize");
-        outputBufferSize = (int) (outputBufferSize - outputBufferSize% Point.defaultPoint.bytes());
         if (outputBufferSize <= 0) {
-            LOGGER.warn("Unsupported input. Use default output buffer size setting");
-            outputBufferSize = (int) (inputBufferSize/ 16* Point.defaultPoint.bytes());
+            LOGGER.warn("Unsupported input. Use default input output size setting");
+            outputBufferSize = DEFAULT_INPUT_BUFFER_SIZE;
         }
-        LOGGER.info("Output buffer size set to "+ String.valueOf(outputBufferSize));
-
-        blockSize= ParamHelper.getIntParam(params, "blockSize");
-        blockSize = blockSize - blockSize% 16;
-        if (blockSize <= 0) {
-            LOGGER.warn("Unsupported input. Use default block size setting");
-            blockSize = inputBufferSize * 64;
-        }
-        LOGGER.info("Block size set to "+ String.valueOf(blockSize));
+        LOGGER.info("output buffer size set to " + String.valueOf(inputBufferSize));
     }
 
-    private void readBlock (MappedByteBuffer inputBlock, MappedByteBuffer outputBlock) {
-        byte[] inputBuffer = new byte[inputBufferSize];
-
+    private void read (String input, MappedByteBuffer output) {
     }
 
     private void syncProcess (RandomAccessFile inputFile, RandomAccessFile outputFile) throws IOException {
+        MappedByteBuffer inputBuffer = inputFile.getChannel().map(FileChannel.MapMode.READ_ONLY, 0, inputFile.length());
+        byte[] inBuffer = new byte[inputBufferSize];
+        Point[] outBuffer = new Point[outputBufferSize];
+        int count= 0;
+
+        StringBuilder temp= new StringBuilder();
+
+        for (long i= 0; i< inputBuffer.limit(); i+= inputBufferSize) {
+            //System.out.println(i);
+            if (inputBuffer.limit()- i >= inputBufferSize) {
+                inputBuffer.get(inBuffer, 0, inputBufferSize);
+            } else {
+                inBuffer = new byte[(int) (inputBuffer.limit()- i)];
+                inputBuffer.get(inBuffer, 0, (int) (inputBuffer.limit()- i));
+            }
+
+            temp.append(new String(inBuffer));
+            String[] num = new String(temp).split("[ |\r\n]+");
+            //System.out.print(new String(buffer));
+            temp.setLength(0);
+            //System.out.println(num.length);
+            int limit= num.length - num.length% Point.defaultPoint.getNum();
+            for (int j = limit; j < num.length; j++) {
+                temp.append(" ").append(num[j]);
+            }
+
+            for (int j = 0; j< limit;) {
+                float[] para= new float[Point.defaultPoint.getNum()];
+                for (int k = 0; k < Point.defaultPoint.getNum(); k++) {
+                    try {
+                        para[k]= Float.parseFloat(num[j++]);
+                    } catch (Exception e) {
+                        para[k]= Integer.parseInt(num[j- 1]);
+                    }
+                }
+                Point point = new Point(para);
+                point.toBytes();
+            }
+        }
 
     }
 
