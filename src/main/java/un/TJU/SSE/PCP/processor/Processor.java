@@ -8,5 +8,5 @@ import java.util.Map;
  * Created by yiros on 2017/3/28.
  */
 public interface Processor {
-    void process (Map<String, String> params, int PROCESS_MODE) throws IOException;
+    void process (Map<String, String> params) throws IOException;
 }

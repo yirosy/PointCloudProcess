@@ -30,7 +30,7 @@ public class Point implements ByteArraySerializable{
             LOGGER.error("Serialize fault.");
             throw new Error("Serialize fault.");
         }
-        LOGGER.info("Serialized size is " + String.valueOf(BYTES) + ".");
+        LOGGER.info("Serialized size is " + String.valueOf(BYTES));
     }
 
     @Override
