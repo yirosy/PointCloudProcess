@@ -21,7 +21,8 @@ out/**
 target/**
 
 # test
-pre/**
+temp/**
+testData/**
 
 # log
 *.log

@@ -53,10 +53,6 @@ public class Point implements ByteArraySerializable{
         return para.length;
     }
 
-    public int getMiniSize () {
-        return para.length * Float.BYTES;
-    }
-
     public Point (float x, float y, float z, float light) {
         para= new float[]{
             x, y, z, light
@@ -67,19 +63,19 @@ public class Point implements ByteArraySerializable{
         this.para= para.clone();
     }
 
-    public float get(int i) {
+    float get(int i) {
         return para[i];
     }
-    public float getX() {
+    float getX() {
         return para[0];
     }
-    public float getY() {
+    float getY() {
         return para[1];
     }
-    public float getZ() {
+    float getZ() {
         return para[2];
     }
-    public float getLight() {
+    float getLight() {
         return para[3];
     }
 }
